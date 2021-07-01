@@ -1,6 +1,7 @@
 import {Component, OnInit} from '@angular/core';
-import {HttpClient} from "@angular/common/http";
-import json from '../data/data.json';
+import versionDev from '../data/version.dev.json';
+import {IVersion} from "../interfaces/IVersion";
+import _ from "lodash";
 
 @Component({
   selector: 'app-root',
@@ -8,12 +9,25 @@ import json from '../data/data.json';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent implements OnInit {
-  title = 'AppDownloadPortal';
+  versions: IVersion[];
 
-  constructor(private http: HttpClient) {
-    console.log(json);
+  selectedVersion: IVersion;
+
+  url = "ms-appinstaller:?source=https://system-micromarket-data.s3-ap-northeast-1.amazonaws.com/Child-store/app/version/{env}/Taburettoreji.{env}.{version}.appinstaller"
+  urlStg: string = "";
+
+  constructor() {
+    this.versions = _.orderBy(versionDev, "version", "desc");
+    // this.versions = versionDev;
+    this.selectedVersion = this.versions[0];
+    this.updateUrlStg();
   }
 
   ngOnInit(): void {
+  }
+
+  updateUrlStg() {
+    this.urlStg = this.url.replace('{env}', 'stg').replace('{version}', this.selectedVersion.version);
+    console.log(this.urlStg);
   }
 }
