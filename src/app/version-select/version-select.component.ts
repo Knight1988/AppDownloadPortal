@@ -19,7 +19,7 @@ export class VersionSelectComponent implements OnInit {
   url = "ms-appinstaller:?source=https://system-micromarket-data.s3-ap-northeast-1.amazonaws.com/Child-store/app/version/{env}/Taburettoreji.{env}.{version}.appinstaller"
   urlApp: SafeUrl = "";
 
-  constructor(private http: HttpClient, private sanitizer:DomSanitizer) {
+  constructor(private http: HttpClient, private sanitizer: DomSanitizer) {
   }
 
   loadData(data: any) {
