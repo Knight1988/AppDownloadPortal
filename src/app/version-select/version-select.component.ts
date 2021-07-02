@@ -1,8 +1,9 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {IVersion} from "../../interfaces/IVersion";
 import _ from "lodash";
 import {HttpClient} from "@angular/common/http";
 import {DomSanitizer, SafeUrl} from "@angular/platform-browser";
+import {plainToClass} from "class-transformer";
+import {AppVersion} from "../../models/version";
 
 @Component({
   selector: 'app-version-select',
@@ -12,9 +13,9 @@ import {DomSanitizer, SafeUrl} from "@angular/platform-browser";
 export class VersionSelectComponent implements OnInit {
 
   @Input() env = 'dev';
-  versions: IVersion[] = [];
+  versions: AppVersion[] = [];
 
-  selectedVersion: IVersion | undefined;
+  selectedVersion: AppVersion | undefined;
 
   url = "ms-appinstaller:?source=https://system-micromarket-data.s3-ap-northeast-1.amazonaws.com/Child-store/app/version/{env}/Taburettoreji.{env}.{version}.appinstaller"
   urlApp: SafeUrl = "";
@@ -23,19 +24,21 @@ export class VersionSelectComponent implements OnInit {
   }
 
   loadData(data: any) {
-    this.versions = _.orderBy(data, "version", "desc");
+    this.versions = data.map((p: any) => plainToClass(AppVersion, p));
+    this.versions = _.orderBy(this.versions, 'version.compareString', 'desc')
     this.selectedVersion = this.versions[0];
     this.updateUrl();
   }
 
   ngOnInit(): void {
     this.loadData = this.loadData.bind(this);
-    this.http.get(`data/version.${this.env}.json`).subscribe(this.loadData)
+    this.http.get(`data/version.${this.env}.json`)
+      .subscribe(this.loadData)
   }
 
   updateUrl() {
     if (this.selectedVersion) {
-      const url = this.url.replace(/{env}/g, this.env).replace('{version}', this.selectedVersion.version);
+      const url = this.url.replace(/{env}/g, this.env).replace('{version}', this.selectedVersion.version.toString());
       this.urlApp = this.sanitizer.bypassSecurityTrustUrl(url);
     }
   }
