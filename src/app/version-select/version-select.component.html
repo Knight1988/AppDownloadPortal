@@ -1,9 +1,29 @@
-<div class="p-field p-grid">
+<div class="p-field p-grid" (konami)="showAdmin()">
   <label class="p-col-fixed" style="width:100px">{{ env }}</label>
-  <div class="p-col-2">
-    <p-dropdown [options]="versions" [(ngModel)]="selectedVersion" (onChange)="updateUrl()" optionLabel="displayText"></p-dropdown>
-  </div>
-  <div class="p-col">
-    <a pButton type="button" label="Install App" [href]="urlApp"></a>
-  </div>
+  <ng-container *ngIf="!isEditing; then normalBlock else editBlock"></ng-container>
+
+  <ng-template #normalBlock>
+    <div class="p-col-2">
+      <p-dropdown [options]="versions" [(ngModel)]="selectedVersion" (onChange)="updateUrl()" optionLabel="displayText"></p-dropdown>
+    </div>
+    <div class="p-col-2">
+      <a pButton type="button" label="Install App" [href]="urlApp"></a>
+    </div>
+    <span class="p-buttonset p-col" *ngIf="showAdminButton">
+      <p-button label="Edit" (onClick)="editVersion()"></p-button>
+      <p-button label="Set Default" (onClick)="setDefault()"></p-button>
+    </span>
+  </ng-template>
+  <ng-template #editBlock>
+    <div class="p-col-2">
+      <input type="text" pInputText [(ngModel)]="selectedVersion.displayText" />
+    </div>
+    <div class="p-col-2">
+      <p-button label="Save" (onClick)="save()"></p-button>
+    </div>
+    <div class="p-col-2">
+      <p-button label="Cancel" (onClick)="cancelEdit()"></p-button>
+    </div>
+  </ng-template>
+  <p-confirmDialog header="Confirmation" icon="pi pi-exclamation-triangle"></p-confirmDialog>
 </div>

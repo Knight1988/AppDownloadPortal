@@ -13,4 +13,12 @@ export class VersionService {
   public async GetVersions(env: string) {
     return await this.http.get<AppVersion[]>(`${environment.endPoint}/version/${env}`).toPromise();
   }
+
+  async updateVersionAsync(selectedVersion: AppVersion | undefined) {
+    return await this.http.put(`${environment.endPoint}/version/`, selectedVersion).toPromise();
+  }
+
+  async setDefault(selectedVersion: AppVersion) {
+    return await this.http.put(`${environment.endPoint}/version/default`, selectedVersion).toPromise();
+  }
 }
