@@ -1,7 +1,7 @@
 <div class="p-field p-grid">
   <label class="p-col-fixed" style="width:100px">{{ env }}</label>
   <div class="p-col-2">
-    <p-dropdown [options]="versions" [(ngModel)]="selectedVersion" (onChange)="updateUrl()" optionLabel="version"></p-dropdown>
+    <p-dropdown [options]="versions" [(ngModel)]="selectedVersion" (onChange)="updateUrl()" optionLabel="displayText"></p-dropdown>
   </div>
   <div class="p-col">
     <a pButton type="button" label="Install App" [href]="urlApp"></a>

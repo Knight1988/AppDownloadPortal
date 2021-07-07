@@ -1,9 +1,8 @@
 import {Component, Input, OnInit} from '@angular/core';
-import _ from "lodash";
 import {HttpClient} from "@angular/common/http";
 import {DomSanitizer, SafeUrl} from "@angular/platform-browser";
-import {plainToClass} from "class-transformer";
 import {AppVersion} from "../../models/version";
+import {VersionService} from "../../services/version.service";
 
 @Component({
   selector: 'app-version-select',
@@ -20,20 +19,20 @@ export class VersionSelectComponent implements OnInit {
   url = "ms-appinstaller:?source=https://system-micromarket-data.s3-ap-northeast-1.amazonaws.com/Child-store/app/version/{env}/Taburettoreji.{env}.{version}.appinstaller"
   urlApp: SafeUrl = "";
 
-  constructor(private http: HttpClient, private sanitizer: DomSanitizer) {
+  constructor(private http: HttpClient,
+              private sanitizer: DomSanitizer,
+              private versionService: VersionService) {
   }
 
-  loadData(data: any) {
-    this.versions = data.map((p: any) => plainToClass(AppVersion, p));
-    this.versions = _.orderBy(this.versions, 'version.compareString', 'desc')
+  async loadData() {
+    this.versions =
+      await this.versionService.GetVersions(this.env);
     this.selectedVersion = this.versions[0];
     this.updateUrl();
   }
 
-  ngOnInit(): void {
-    this.loadData = this.loadData.bind(this);
-    this.http.get(`data/version.${this.env}.json`)
-      .subscribe(this.loadData)
+  async ngOnInit(): Promise<void> {
+    await this.loadData();
   }
 
   updateUrl() {
